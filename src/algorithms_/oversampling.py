@@ -226,6 +226,7 @@ class DependetLocallyOptimizedAllClassOversample(Oversample):
         all_subclasses = list(powerset(all_types_to_oversample))
 
         instance_types_per_class = []
+        oversampled_classes = []
         for class_number_to_oversample in range(len(all_classes)):
             scores = np.array([])
             for subclass in all_subclasses:
@@ -240,10 +241,16 @@ class DependetLocallyOptimizedAllClassOversample(Oversample):
 
             self.logger.debug(f"Scores: {scores}")
 
-            instance_types_to_oversample = np.argmax(scores)
+            highest_scores = np.argwhere(scores == np.amax(scores))
+            if len(highest_scores) == 1:
+                instance_types_to_oversample = highest_scores[0][0]
+            elif 0 in highest_scores:
+                instance_types_to_oversample = 0
+            else:
+                instance_types_to_oversample = highest_scores[np.random.randint(0, len(highest_scores))][0]
+
             instance_types_per_class.append(instance_types_to_oversample)
 
-            oversampled_classes = []
             X, y, oversampled = self._one_class_oversample(X, y, instance_types, algorithm, all_classes,
                                                            class_number_to_oversample,
                                                            all_subclasses[instance_types_to_oversample],

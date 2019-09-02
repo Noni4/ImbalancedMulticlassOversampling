@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from instance_types import Types
-from math import sqrt, floor
+from math import log, floor
 
 import numpy as np
 
@@ -14,7 +14,7 @@ class StaticKNNTypeClassifier:
         knn = KNeighborsClassifier(n_neighbors=5)
         knn.fit(X, y)
         types = []
-        neibors = knn.kneighbors(X, n_neighbors=6, return_distance=False)
+        neibors = knn.kneighbors(X, n_neighbors=6, return_distance=False) #TODO correct spelling mistake
         actual_neibors = neibors[:,1:] # counts it self its own neighbor
         for i in range(len(actual_neibors)):
             instance_neighbors_of_the_same_class = 0
@@ -28,36 +28,6 @@ class StaticKNNTypeClassifier:
                 types.append(Types.BORDERLINE)
                 continue
             elif instance_neighbors_of_the_same_class >= 1:
-                types.append(Types.RARE)
-                continue
-            else:
-                types.append(Types.OUTLIER)
-        return np.array(types)
-
-
-class DynamicKNNTypeClassifier:
-
-    def __init__(self):
-        pass
-
-    def get_types(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
-        knn = KNeighborsClassifier(n_neighbors=floor(sqrt(len(y))))
-        knn.fit(X, y)
-        types = []
-        neibors = knn.kneighbors(X, n_neighbors=floor(sqrt(len(y))) + 1, return_distance=False)
-        actual_neibors = neibors[:,1:] # counts it self its own neighbor
-        for i in range(len(actual_neibors)):
-            instance_neighbors_of_the_same_class = 0
-            for neibor in actual_neibors[i]:
-                if y[i] == y[neibor]:
-                    instance_neighbors_of_the_same_class += 1
-            if instance_neighbors_of_the_same_class >= floor(0.66 * sqrt(len(y))) + 1:
-                types.append(Types.SAFE)
-                continue
-            elif instance_neighbors_of_the_same_class >= floor(0.33 * sqrt(len(y))) + 1:
-                types.append(Types.BORDERLINE)
-                continue
-            elif instance_neighbors_of_the_same_class >= floor(0.16 * sqrt(len(y))) + 1:
                 types.append(Types.RARE)
                 continue
             else:

@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split, cross_val_score
 
 from algorithms_.oversampling import AllClassOversample, OneClassOversample, IndependentLocallyOptimizedAllClassOversample, DependetLocallyOptimizedAllClassOversample
 from algorithms_.preprocessing import Preprocessor
-from algorithms_.type_classifier import StaticKNNTypeClassifier, DynamicKNNTypeClassifier
+from algorithms_.type_classifier import StaticKNNTypeClassifier
 from instance_types import Types
 from utils.ml_util import dataframe_to_arrays, RandomState, run_cross_val, get_class_count, get_classifier
 from utils.uci_util import UciConnector
@@ -55,8 +55,6 @@ for classifier_name in classifier_names:
 
                             if type_algorithm == 'static':
                                 type_classifier = StaticKNNTypeClassifier()
-                            elif type_algorithm == 'dynamic':
-                                type_classifier = DynamicKNNTypeClassifier()
                             else:
                                 logger.error(f"Type algorithm {type_algorithm} is unknown")
                                 continue
@@ -68,7 +66,7 @@ for classifier_name in classifier_names:
                                 oversampler = AllClassOversample()
                             elif algorithm == 'independentLocallyOptimized':
                                 oversampler = IndependentLocallyOptimizedAllClassOversample()
-                            elif algorithm == 'dependedLocallyOptimized':
+                            elif algorithm == 'biggestFirstDependentLocallyOptimized' or algorithm == 'smallestFirstDependentLocallyOptimized':
                                 oversampler = DependetLocallyOptimizedAllClassOversample()
                             else:
                                 logger.error(f"Number of classes to oversample {algorithm} unknown")
@@ -90,7 +88,7 @@ for classifier_name in classifier_names:
                                                                                                       random_state,
                                                                                                       first_class='biggest',
                                                                                                       algorithm=oversampling_algorithm)
-                            elif algorithm == 'smallestFirstDependentOptimized':
+                            elif algorithm == 'smallestFirstDependentLocallyOptimized':
                                 X, y, oversampled_types, oversampled_classes = oversampler.oversample(X, y, instance_types,
                                                                                                       classifier_name,
                                                                                                       random_state,
