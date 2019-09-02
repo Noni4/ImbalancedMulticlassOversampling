@@ -1,0 +1,19 @@
+ # Compiled #
+############
+*.pyc
+
+# Folders #
+###########
+.idea
+src/__pycache__
+src/tmp
+
+# Config #
+##########
+
+# Environment #
+*.env
+venv
+
+# Remaining #
+.directory
